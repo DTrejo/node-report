@@ -1,0 +1,19 @@
+{
+  "author": "David Trejo <dtrejo@cs.brown.edu> (http://dtrejo.com/)",
+  "name": "report",
+  "description": "Report test results to npm's test result listings",
+  "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "//github.com/dtrejo/report.git"
+  },
+  "main": "report.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "engines": {
+    "node": "~0.6.6"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
