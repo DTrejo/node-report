@@ -1,6 +1,7 @@
 exports = module.exports = report
 
 var request = require('request')
+  , url = process.env.NPATURL || 'http://npat.iriscouch.com/results/'
 
 // reports test results to couchCB. additional information about the node
 // version and operating system is added before reporting.
@@ -30,8 +31,50 @@ function report(results, cb) {
   }
 
   // TODO: remove me
-  console.log(results.url, '>>', data)
+  console.log('This console.log will be shown');
+  var rand = uuid()
+  var options = {
+    uri: 'http://npat.iriscouch.com/results/put' + rand
+  , json: data
+  }
+  request.put(options, function (error, response, body) {
+    // Neither of these console.logs will be shown if run via npm w/ npat=true:
+    //
+    //    npm config set npat true; npm install gss; npm config set npat false;
+    //
+    if (response.statusCode == 201) {
+      console.log('doc saved as: http://npat.iriscouch.com/results/' + rand)
+    } else {
+      console.log('error: '+ response.statusCode)
+      console.log(body)
+    }
+  })
+}
 
-  var options = { url: results.url || url, json: data }
-  // request.put(options, cb)
+// via https://gist.github.com/982883, by
+function uuid(
+  a                  // placeholder
+){
+  return a           // if the placeholder was passed, return
+    ? (              // a random number from 0 to 15
+      a ^            // unless b is 8,
+      Math.random()  // in which case
+      * 16           // a random number from
+      >> a/4         // 8 to 11
+      ).toString(16) // in hexadecimal
+    : (              // or otherwise a concatenated string:
+      [1e7] +        // 10000000 +
+      -1e3 +         // -1000 +
+      -4e3 +         // -4000 +
+      -8e3 +         // -80000000 +
+      -1e11          // -100000000000,
+      ).replace(     // replacing
+        /[018]/g,    // zeroes, ones, and eights with
+        uuid         // random hex digits
+      )
+}
+
+// This works just fine
+if (require.main === module) {
+  report({ name: 'gss', stderr: 'sent via report.js ifmain' })
 }
